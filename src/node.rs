@@ -13,26 +13,34 @@ pub enum NodeType {
 #[derive(Debug, PartialEq)]
 pub struct Span {
     span_type: SpanType,
-    content: Text,
 }
 
 #[derive(Debug, PartialEq)]
 pub enum SpanType {
     Em,
     Strong,
-    Link,
+    Link(Link),
     Code,
 }
 
 impl Span {
-    pub fn new(span_type: SpanType, content: Text, children: Vec<Box<Node>>) -> Box<Node> {
+    pub fn new(span_type: SpanType, children: Vec<Box<Node>>) -> Box<Node> {
         Box::new(Node {
-            node_type: NodeType::Span(Span {
-                span_type,
-                content,
-            }),
+            node_type: NodeType::Span(Span { span_type }),
             children,
         })
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Link {
+    display: String,
+    link: String,
+}
+
+impl Link {
+    pub fn new(display: String, link: String) -> Self {
+        Self { display, link }
     }
 }
 
