@@ -26,9 +26,7 @@ pub enum SpanType {
 impl Span {
     pub fn new(span_type: SpanType, children: Vec<Box<Node>>) -> Box<Node> {
         Box::new(Node {
-            node_type: NodeType::Span(Span {
-                span_type,
-            }),
+            node_type: NodeType::Span(Span { span_type }),
             children,
         })
     }
@@ -42,10 +40,7 @@ pub struct Link {
 
 impl Link {
     pub fn new(display: String, link: String) -> Self {
-        Self {
-            display,
-            link,
-        }
+        Self { display, link }
     }
 }
 
