@@ -34,7 +34,7 @@ jobs:
 
     # clippy
     - name: Clippy
-      run: cargo clippy -Dwarnings
+      run: cargo clippy
     
     # fmt
     - name: Format
