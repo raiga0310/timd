@@ -1,0 +1,41 @@
+name: Check Tests
+on:
+  push:
+    branches: [master]
+  pull_request:
+    paths-ignore:
+      - "README.md"
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+
+    steps:
+    # checkout
+    - uses: actions/checkout@v4
+
+    # cache
+    - name: Cache dependencies
+      uses: Swatinem/rust-cache@v2
+    
+    # toolchain
+    - name: Install Rust Toolchain(Stable)
+      run: |
+        rustup toolcahin install stable
+    
+    # compile
+    - name: Tests Compile
+      run: cargo test --no-run --locked
+    
+    # test
+    - name: Tests
+      run: cargo test
+
+    # clippy
+    - name: Clippy
+      run: cargo clippy -Dwarnings
+    
+    # fmt
+    - name: Format
+      run: cargo fmt --check
