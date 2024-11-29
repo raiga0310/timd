@@ -22,7 +22,7 @@ jobs:
     # toolchain
     - name: Install Rust Toolchain(Stable)
       run: |
-        rustup toolcahin install stable
+        rustup toolchain install stable
     
     # compile
     - name: Tests Compile
