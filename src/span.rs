@@ -75,6 +75,14 @@ where
         .map(|(display, link)| Span::new(SpanType::Link(Link::new(display, link)), vec![]))
 }
 
+pub fn text<Input>() -> impl Parser<Input, Output = Box<Node>>
+where 
+    Input: Stream<Token = char>,
+    Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
+{
+    many1(any()).map(|t| Text::new(t))
+}
+
 #[cfg(test)]
 mod tests {
     use crate::node::{Link, Span};
@@ -146,6 +154,14 @@ mod tests {
                 ),
                 ""
             ))
+        )
+    }
+
+    #[test]
+    fn parse_text() {
+        assert_eq!(
+            text().parse("hoge"),
+            Ok((Text::new("hoge".to_string()), ""))
         )
     }
 }
