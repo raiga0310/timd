@@ -10,21 +10,21 @@ where
 {
     choice((
         between(
-            char('*'), 
-            char('*'), 
-            parse_with_delimiter('*') // temp
+            char('*'),
+            char('*'),
+            parse_with_delimiter('*'), // temp
         ),
         between(
             char('_'),
             char('_'),
-            parse_with_delimiter('_') // temp
-        )
+            parse_with_delimiter('_'), // temp
+        ),
     ))
-        .map(|content| Span::new(SpanType::Em, vec![content]))
+    .map(|content| Span::new(SpanType::Em, vec![content]))
 }
 
 pub fn parse_with_delimiter<Input>(delimiter: char) -> impl Parser<Input, Output = Box<Node>>
-where 
+where
     Input: Stream<Token = char>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
@@ -55,22 +55,17 @@ mod tests {
             assert_eq!(
                 em().parse("*foo*"),
                 Ok((
-                    Span::new(
-                    SpanType::Em,
-                    vec![Text::new("foo".to_string())]
-                ),
-                ""
+                    Span::new(SpanType::Em, vec![Text::new("foo".to_string())]),
+                    ""
                 ))
             )
         }
         {
             assert_eq!(
                 em().parse("_bar_"),
-                Ok((Span::new(
-                    SpanType::Em,
-                    vec![Text::new("bar".to_string())]
-                ),
-                ""
+                Ok((
+                    Span::new(SpanType::Em, vec![Text::new("bar".to_string())]),
+                    ""
                 ))
             )
         }
