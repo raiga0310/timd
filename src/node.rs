@@ -21,6 +21,7 @@ pub enum SpanType {
     Strong,
     Link(Link),
     Code,
+    Del,
 }
 
 impl Span {
