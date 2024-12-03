@@ -1,5 +1,5 @@
 use combine::parser::char::{char, letter};
-use combine::{between, choice, many1, satisfy, ParseError, Parser, Stream};
+use combine::{any, between, choice, many1, satisfy, ParseError, Parser, Stream};
 
 use crate::node::{Link, Node, Span, SpanType, Text};
 
@@ -76,7 +76,7 @@ where
 }
 
 pub fn text<Input>() -> impl Parser<Input, Output = Box<Node>>
-where 
+where
     Input: Stream<Token = char>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
