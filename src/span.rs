@@ -104,7 +104,14 @@ where
     Input: Stream<Token = char>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    choice((attempt(strong()), attempt(em()), attempt(link()), attempt(del()), attempt(code()), attempt(text())))
+    choice((
+        attempt(strong()),
+        attempt(em()),
+        attempt(link()),
+        attempt(del()),
+        attempt(code()),
+        attempt(text()),
+    ))
 }
 
 pub fn span_elements<Input>() -> impl Parser<Input, Output = Vec<Box<Node>>>
