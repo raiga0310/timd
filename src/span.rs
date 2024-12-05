@@ -9,7 +9,7 @@ where
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
     between(char('`'), char('`'), parse_with_delimiter('`'))
-        .map(|content| Span::new(SpanType::Code, vec![content]))
+        .map(|content| Span::new(SpanType::Code, vec![Text::new(content)]))
 }
 
 pub fn del<Input>() -> impl Parser<Input, Output = Box<Node>>
@@ -22,8 +22,9 @@ where
         (char('~'), char('~')),
         parse_with_delimiter('~'),
     )
-    .map(|content| Span::new(SpanType::Del, vec![content]))
+    .map(|content| parse_with_children(SpanType::Del, content))
 }
+
 pub fn strong<Input>() -> impl Parser<Input, Output = Box<Node>>
 where
     Input: Stream<Token = char>,
@@ -41,7 +42,7 @@ where
             parse_with_delimiter('_'), // temp
         ),
     ))
-    .map(|content| Span::new(SpanType::Strong, vec![content]))
+    .map(|content| parse_with_children(SpanType::Strong, content))
 }
 
 pub fn em<Input>() -> impl Parser<Input, Output = Box<Node>>
@@ -61,15 +62,29 @@ where
             parse_with_delimiter('_'), // temp
         ),
     ))
-    .map(|content| Span::new(SpanType::Em, vec![content]))
+    .map(|content| parse_with_children(SpanType::Em, content))
 }
 
-pub fn parse_with_delimiter<Input>(delimiter: char) -> impl Parser<Input, Output = Box<Node>>
+pub fn parse_with_children(span_type: SpanType, content: String) -> Box<Node> {
+    let children: Vec<Box<Node>> = match span_elements().parse(content.as_str()) {
+        Ok((mut children, remain)) => {
+            if !remain.is_empty() {
+                children.push(Text::new(remain.to_string()));
+            }
+            children
+        }
+
+        Err(_) => vec![Text::new(content.clone())],
+    };
+    Span::new(span_type, children)
+}
+
+pub fn parse_with_delimiter<Input>(delimiter: char) -> impl Parser<Input, Output = String>
 where
     Input: Stream<Token = char>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    many1(satisfy(move |c| c != delimiter)).map(|s| Text::new(s))
+    many1(satisfy(move |c| c != delimiter))
 }
 
 pub fn link<Input>() -> impl Parser<Input, Output = Box<Node>>
@@ -89,7 +104,23 @@ where
     Input: Stream<Token = char>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    many1(any()).map(|t| Text::new(t))
+    many1(any()).map(Text::new)
+}
+
+pub fn span_element<Input>() -> impl Parser<Input, Output = Box<Node>>
+where
+    Input: Stream<Token = char>,
+    Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
+{
+    choice((strong(), em(), link(), del(), code(), text()))
+}
+
+pub fn span_elements<Input>() -> impl Parser<Input, Output = Vec<Box<Node>>>
+where
+    Input: Stream<Token = char>,
+    Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
+{
+    many1(span_element())
 }
 
 #[cfg(test)]
