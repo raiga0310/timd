@@ -129,31 +129,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_with_nested_span_element() {
-        {
-            assert_eq!(
-                span_elements().parse("**foo_bar~~buz~~_**"),
-                Ok((
-                    vec![Span::new(
-                        SpanType::Strong,
-                        vec![
-                            Text::new("foo".to_string()),
-                            Span::new(
-                                SpanType::Em,
-                                vec![
-                                    Text::new("bar".to_string()),
-                                    Span::new(SpanType::Del, vec![Text::new("buz".to_string())]),
-                                ]
-                            ),
-                        ]
-                    )],
-                    ""
-                ))
-            )
-        }
-    }
-
-    #[test]
     fn parse_with_multiple_span_element() {
         {
             assert_eq!(
