@@ -129,6 +129,26 @@ mod tests {
     use super::*;
 
     #[test]
+    fn parse_with_multiple_span_element() {
+        {
+            assert_eq!(
+                span_elements().parse("`foo`~~bar~~*buz*__hoge___huga_**piyo**"),
+                Ok((
+                    vec![
+                        Span::new(SpanType::Code, vec![Text::new("foo".to_string())]),
+                        Span::new(SpanType::Del, vec![Text::new("bar".to_string())]),
+                        Span::new(SpanType::Em, vec![Text::new("buz".to_string())]),
+                        Span::new(SpanType::Strong, vec![Text::new("hoge".to_string())]),
+                        Span::new(SpanType::Em, vec![Text::new("huga".to_string())]),
+                        Span::new(SpanType::Strong, vec![Text::new("piyo".to_string())]),
+                    ],
+                    ""
+                ))
+            )
+        }
+    }
+
+    #[test]
     fn parse_with_span_element() {
         {
             assert_eq!(
